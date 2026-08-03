@@ -1,0 +1,145 @@
+﻿{
+  "prompt_metadata": {
+    "app_name": "AviGarden - Intelligent Backyard Birding & Feeder Companion",
+    "tagline": "Track sightings, monitor feeders, and discover local migrations in real-time.",
+    "target_platform": "Android (Kotlin + Jetpack Compose)",
+    "language": "Kotlin",
+    "ui_framework": "Jetpack Compose (Material Design 3)",
+    "architecture_pattern": "MVVM + Clean Architecture + MVI for Birding and Feeder States",
+    "build_system": "Gradle Kotlin DSL (Version Catalogs)",
+    "min_sdk": 26,
+    "target_sdk": 34,
+    "category": "Birdwatching / Nature / Wildlife Analytics",
+    "monetization": "Hybrid: Free (15 sightings logs/month, basic feeder logs, and standard alerts + AdMob Banner/Interstitial Ads) | Premium Pro ($2.99/month or $14.99 lifetime purchase to unlock unlimited logging, high-fidelity migration map, automated local geo-alerts, dynamic homescreen widgets, and an ad-free workspace)"
+  },
+  "agent_instructions": {
+    "role": "You are a Principal Android Geo-Spatial Systems and Graphics Engineer. Your goal is to design 'AviGarden', an elegant, responsive utility application for backyard birding enthusiasts to log avian sightings, calculate and track food levels across active bird feeders, and receive local migration updates when target species enter the local geofenced perimeter.",
+    "design_philosophy": "Serene, functional, and highly tactile. The UI must feel like an extension of nature, leveraging calming earth tones, ample breathing room, gentle transition micro-animations, and fluid charts. Real-time geo-tracking and feeder tracking must be responsive, ensuring low-latency interactions on the map and data entry fields.",
+    "code_standards": [
+      "Strict Clean Architecture layers: Presentation (Compose UI, ViewModels, MVI Intents), Domain (Sightings and Feeder UseCases, Geo-location/Fencing Interfaces), and Data (Room DB, Datastore, FusedLocationProvider, eBird/Wildlife API Client wrapper).",
+      "Dynamic MVI state management using Kotlin StateFlows to transition smoothly between map scanning, log entry form handling, analytics chart updates, and background syncing.",
+      "Reliable background orchestration using Android WorkManager to periodically fetch local species migration data, evaluate geo-proximity, and fire targeted local push notifications.",
+      "Optimized storage and caching architecture utilizing Room for heavy offline support (saving geo-tagged species, local media URIs, and historic feeding trends)."
+    ]
+  },
+  "product_specification": {
+    "core_mechanics": {
+      "geo_tracking_and_sighting_log": {
+        "description": "A high-precision, offline-first species sighting recorder mapping bird encounters to spatial coordinates.",
+        "features": [
+          "Auto-Location Mapping: Hook into Google Play Services FusedLocationProviderClient to silently capture high-accuracy GPS coordinates during sighting logs.",
+          "Dynamic Sighting Form: Support logging species names (backed by a localized pre-loaded SQLite database of common birds), flock size, active behavior (feeding, flying, nesting), user remarks, and system-registered media photo paths.",
+          "Weather Integration: Fetch a local snapshot of wind, temperature, and sky conditions during the sighting event to correlate bird presence with localized climate patterns."
+        ]
+      },
+      "smart_feeder_monitor": {
+        "description": "Calculates, tracks, and visualizes replenishment levels and bird traffic for backyard feeders.",
+        "features": [
+          "Visual Feeder Cylinders: Custom-rendered Compose Canvas components displaying a liquid-like animation representing seed, suet, or nectar food levels (0-100%).",
+          "Decay Tracking: Algorithmic estimations of seed depletion speeds based on user logs and feeder traffic, with custom reminders when levels drop below 15%."
+        ]
+      },
+      "local_migration_alert_system": {
+        "description": "Proximity-based tracking of targeted or rare species within a user-defined radius.",
+        "mechanics": [
+          "Integrate an background service executing periodic checks using WorkManager (respecting battery-saving rules) that compares local coordinates with aggregated regional birding API reports (such as eBird API).",
+          "Dispatch rich notifications with target bird silhouettes and estimated distances to alert users of nearby rare arrivals."
+        ]
+      },
+      "custom_compose_charts": {
+        "description": "Interactive, custom-drawn Jetpack Compose Canvas charts mapping birder analytics.",
+        "charts": [
+          "A multi-line spline chart representing Sighting Volume vs Time of Day.",
+          "A segmented radial donut chart showcasing species distribution patterns.",
+          "A stacked bar chart mapping monthly seed spending or consumption trends across active feeders."
+        ]
+      },
+      "admob_monetization_layer": {
+        "banner_ads": "Adaptive anchor banners positioned at the footer of the Sighting History, Feeders, and Analytics dashboards (suppressed for Pro-tier).",
+        "interstitial_ads": "Shown elegantly after saving a sighting or logging a feeder replenishment (restricted with a 12-minute safety cap to avoid disrupting the peaceful birder UX).",
+        "rewarded_ads": "Watch an ad to unlock high-resolution species identification reference cards or premium export templates for 24 hours.",
+        "consent_platform": "Incorporate the Google User Messaging Platform (UMP) SDK to handle fully compliant, international GDPR and ePrivacy consent loops."
+      }
+    }
+  },
+  "technical_specification": {
+    "key_permissions": [
+      "android.permission.ACCESS_FINE_LOCATION (For automatic spatial coordinates mapping on sighting logs)",
+      "android.permission.ACCESS_COARSE_LOCATION (Fallback coordinate mapping for privacy-conscious users)",
+      "android.permission.READ_MEDIA_IMAGES (Required to attach birding photographs on SDK 33+)",
+      "android.permission.POST_NOTIFICATIONS (For local migration alerts and feeder refill warnings on SDK 33+)",
+      "android.permission.ACCESS_BACKGROUND_LOCATION (Optional: For automatic background migration alerts; must be requested safely in accordance with Google Play Store policies)",
+      "android.permission.INTERNET (Required for syncing local sightings, API fetches, and loading AdMob resources)"
+    ],
+    "module_architecture": {
+      "app": "Application initialization, dynamic Hilt provider bindings, main screen navigation hosts.",
+      "core_ui": "Nature-focused M3 design tokens (Emerald and Warm Oak), customized touch feedback, custom canvas fluid loaders, and reusable chart primitives.",
+      "feature_sightings": "Location tracking controllers, camera-to-gallery photo binders, species picker sheet, and interactive map displays.",
+      "feature_feeders": "Dynamic feeder volume calculations, decay algorithms, custom-rendered replenishment sliders, and status charts.",
+      "feature_analytics": "High-fidelity Compose Canvas charts (splines, donuts, stacked bars), temporal filters, and PDF export channels.",
+      "feature_alerts": "WorkManager-backed background network triggers, location delta calculators, and rich notification push handlers.",
+      "feature_pro": "Google Play Billing setup, active subscription verify flows, custom Paywall screens, and premium dynamic widget bindings."
+    },
+    "state_management_details": {
+      "birding_state_machine": {
+        "state_model": "data class BirderState(val activeSightings: List, val activeFeeders: List, val isFetchingLocation: Boolean, val currentUserCoordinates: LatLng?, val uiMode: BirderUiMode, val activeAlerts: List, val error: String?)",
+        "ui_mode": "enum class BirderUiMode { SIGHTINGS_MAP, LOG_FORM, FEEDER_DASHBOARD, STATS_PANEL, PRO_SETTINGS }"
+      }
+    },
+    "core_dependencies": {
+      "jetpack_compose": "androidx.compose.ui:ui:1.6.x (with Material 3 components and constraintlayout-compose)",
+      "play_services_location": "com.google.android.gms:play-services-location:21.2.x (For secure coordinates logging)",
+      "database_orm": "androidx.room:room-runtime:2.6.x & room-compiler (incorporating room-ktx for coroutines)",
+      "dependency_injection": "com.google.dagger:hilt-android:2.51 & hilt-navigation-compose",
+      "networking": "com.squareup.retrofit2:retrofit:2.11.x & com.squareup.okhttp3:logging-interceptor:4.12.x",
+      "background_runtime": "androidx.work:work-runtime-ktx:2.9.x",
+      "billing": "com.android.billingclient:billing-ktx:6.2.0",
+      "monetization": "com.google.android.gms:play-services-ads:23.x.x (AdMob Mobile Ads SDK)",
+      "consent_sdk": "com.google.android.ump:user-messaging-platform:2.2.x (User Consent Collection)"
+    },
+    "ui_ux_design": {
+      "theme_color_palette": {
+        "primary": "#1B5E20 (Deep Forest Green - representing nature and leaves)",
+        "secondary": "#FF8F00 (Vibrant Sunflower Gold - representing warm light and birds)",
+        "background": "#F1F8E9 (Calming Sage White)",
+        "surface": "#FFFFFF (Pure White)",
+        "on_background": "#1B2D1B (Dark Spruce Pine)"
+      },
+      "design_notes": "Sleek Dark Forest mode is available ('background': '#0D1B0E', 'surface': '#152E16', 'on_surface': '#ECEFF1'). Animations must use spring-based physical interpolations to create a relaxed, natural app personality."
+    }
+  },
+  "execution_roadmap": [
+    {
+      "phase_1": "Project Initialization & Scaffolding",
+      "description": "Establish multi-module structure utilizing clean architecture guidelines. Scaffold Hilt containers, set up Kotlin Version Catalogs, prepare Type-Safe Compose Navigation routes, and initialize Room schema structures for birds database, feeders history logs, and offline files."
+    },
+    {
+      "phase_2": "Location integration & Sightings Mapper Engine",
+      "description": "Implement location permission frameworks. Integrate play-services-location to capture real-time geographical coordinates. Design the sighting form, with localized search engines looking up localized bird catalogs offline."
+    },
+    {
+      "phase_3": "The Custom Feeder Monitor UI & Fluid Level Physics",
+      "description": "Construct dynamic feeder models in Room. Write custom Canvas drawing elements in Compose to represent the 2D feeder tanks with fluid filling calculations. Integrate touch handler sliders so users can easily edit remaining seed volumes."
+    },
+    {
+      "phase_4": "Analytics: Custom Canvas Charting Framework",
+      "description": "Build high-performance, clean-code mathematical coordinate drawing utilities on standard Jetpack Compose Canvas. Render dynamic lines, smooth splines, bar segments, and radial arcs with native pointer touch-handlers to display tooltip values."
+    },
+    {
+      "phase_5": "WorkManager Local Migration Alert Services",
+      "description": "Configure WorkManager for energy-conscious periodic network scans. Fetch target bird movements nearby. Run spatial distance delta calculations using the FusedLocation API, and format detailed local notification channels."
+    },
+    {
+      "phase_6": "AdMob SDK & GDPR Consent Framework",
+      "description": "Initialize the Google User Messaging Platform (UMP) SDK. Construct modular Compose container overlays to request location/privacy consent loops before initializing the AdMob SDK. Inject responsive Anchor adaptive Banners and custom-capped Interstitial triggers."
+    },
+    {
+      "phase_7": "Google Play Billing 6.x Premium Paywall",
+      "description": "Build the Google Play Billing subscription repository. Construct a modern, visually striking Pro Paywall featuring dynamic cards, comparison grids, and spring transition animations that bypasses AdMob overlays upon transaction validation."
+    },
+    {
+      "phase_8": "Optimization, Profiling & Polished Release",
+      "description": "Analyze CPU footprint during Canvas chart drawing and location tracking. Prevent memory leaks, write comprehensive UI tests, build beautiful dynamic home widgets, and build the release-ready production bundle."
+    }
+  ]
+}

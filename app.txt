@@ -1,0 +1,24 @@
+﻿App Name: AviGarden
+Version: 1.0.0
+Platform: Android / iOS
+Category: Birdwatching / Nature
+Target Market: Global
+Price Model: Free + $2.99/month Pro
+
+Description:
+A local geo-tracking log for backyard birders to record sightings, log active feeder food levels, and get local migration alerts when target species are near.
+
+Key Features:
+- Bird sighting log with species, time, GPS location
+- Photo capture per sighting directly in app
+- Feeder management: log food type, fill level, last refill date
+- Local migration alerts via eBird API for your zip code
+- Life list: track all unique species ever spotted
+- Species identifier: upload photo → AI suggests likely species
+- Seasonal calendar showing which birds are expected in your area
+- Offline species database (no internet needed for logging)
+- Share sightings with local birdwatching communities
+
+Target Audience: Backyard birdwatchers, nature enthusiasts, wildlife hobbyists
+Competitors: Merlin Bird ID, eBird, iNaturalist
+Unique Value: Combines feeder management + migration alerts + sighting log in one app
